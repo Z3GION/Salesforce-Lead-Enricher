@@ -7,7 +7,13 @@ public with sharing class LeadEnrichmentController {
         
         try {
             // Real NewsAPI HTTP Callout - MUST happen before DML
-            String apiKey = '9069b2d2af38488685d062a8313430a1';
+            // Retrieve API key from Custom Metadata (GitHub-safe)
+            App_Setting__mdt keySetting = App_Setting__mdt.getInstance('NewsAPI_Key');
+            if (keySetting == null || String.isEmpty(keySetting.Value__c)) {
+                throw new AuraHandledException('NewsAPI key not configured in Custom Metadata');
+            }
+            
+            String apiKey = keySetting.Value__c;
             String endpoint = 'https://newsapi.org/v2/everything?q=' + 
                              EncodingUtil.urlEncode(searchTerm, 'UTF-8') + 
                              '&apiKey=' + apiKey;

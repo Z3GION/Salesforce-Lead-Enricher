@@ -1,0 +1,71 @@
+<template>
+    <lightning-card title="News Lead Scraper" icon-name="standard:news">
+        <div class="slds-var-p-around_medium">
+            <!-- Search Section -->
+            <div class="slds-grid slds-gutters slds-var-m-bottom_medium">
+                <div class="slds-col slds-size_3-of-4">
+                    <lightning-input 
+                        label="Search Topic" 
+                        value={searchTerm} 
+                        onchange={handleSearchChange}
+                        placeholder="e.g. Technology, Finance, AI"
+                        type="search">
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-4 slds-align-bottom">
+                    <lightning-button 
+                        variant="brand" 
+                        label="Search News" 
+                        title="Search News" 
+                        onclick={handleSearch} 
+                        class="slds-var-m-left_small">
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </template>
+
+            <!-- Results Section -->
+            <template if:true={results}>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <template for:each={results} for:item="article" for:index="index">
+                        <div key={article.url} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-var-m-bottom_medium">
+                            <lightning-card variant="Narrow">
+                                <h3 slot="title" class="slds-truncate" title={article.title}>
+                                    <a href={article.url} target="_blank">{article.title}</a>
+                                </h3>
+                                <div class="slds-var-p-horizontal_small">
+                                    <p class="slds-text-body_small slds-var-m-bottom_small">
+                                        <strong>Source:</strong> {article.source}
+                                    </p>
+                                    <p class="slds-text-body_regular article-desc" title={article.description}>
+                                        {article.description}
+                                    </p>
+                                </div>
+                                <div slot="footer">
+                                    <lightning-button 
+                                        label="Create Lead" 
+                                        variant="neutral"
+                                        data-index={index}
+                                        onclick={handleCreateLead}
+                                        disabled={article.isCreated}>
+                                    </lightning-button>
+                                </div>
+                            </lightning-card>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- No Results -->
+            <template if:true={hasNoResults}>
+                <div class="slds-text-align_center slds-var-m-top_medium">
+                    No results found.
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
